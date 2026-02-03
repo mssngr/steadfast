@@ -8,16 +8,37 @@ import {
   View,
   type ViewProps,
   type ViewStyle,
-} from "react-native";
+} from 'react-native'
 
 export default {
-  Image(style: ImageStyle) {
-    return (props: ImageProps) => <Image {...props} style={style} />;
+  Image<T extends Record<string, unknown>>(
+    style: ImageStyle | ((props: T & ImageProps) => ImageStyle),
+  ) {
+    return (props: T & ImageProps) => (
+      <Image
+        {...props}
+        style={typeof style === 'function' ? style(props) : style}
+      />
+    )
   },
-  Text(style: TextStyle) {
-    return (props: TextProps) => <Text {...props} style={style} />;
+  Text<T extends Record<string, unknown>>(
+    style: TextStyle | ((props: T & TextProps) => TextStyle),
+  ) {
+    return (props: T & TextProps) => (
+      <Text
+        {...props}
+        style={typeof style === 'function' ? style(props) : style}
+      />
+    )
   },
-  View(style: ViewStyle) {
-    return (props: ViewProps) => <View {...props} style={style} />;
+  View<T extends Record<string, unknown>>(
+    style: ViewStyle | ((props: T & ViewProps) => ViewStyle),
+  ) {
+    return (props: T & ViewProps) => (
+      <View
+        {...props}
+        style={typeof style === 'function' ? style(props) : style}
+      />
+    )
   },
-};
+}
