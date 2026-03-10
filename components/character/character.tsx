@@ -5,7 +5,11 @@ import * as S from './character-styles'
 export default function Character({
   animation,
 }: {
-  animation: ImageSourcePropType
+  animation: {
+    path: ImageSourcePropType
+    frames: number
+    speed: number
+  }
 }) {
   const [frame, setFrame] = React.useState(0)
   const [direction, setDirection] = React.useState<
@@ -33,29 +37,43 @@ export default function Character({
 
   React.useEffect(() => {
     if (isMovingUp || isMovingDown || isMovingLeft || isMovingRight) {
-      const animation = setInterval(
-        () => setFrame((prevFrame) => (prevFrame === 8 ? 0 : prevFrame + 1)),
-        100,
+      const animationInterval = setInterval(
+        () =>
+          setFrame((prevFrame) =>
+            prevFrame === animation.frames - 1 ? 0 : prevFrame + 1,
+          ),
+        animation.speed,
       )
-      return () => clearInterval(animation)
+      return () => clearInterval(animationInterval)
     } else {
       setFrame(0)
     }
-  }, [isMovingUp, isMovingDown, isMovingLeft, isMovingRight])
+  }, [
+    isMovingUp,
+    isMovingDown,
+    isMovingLeft,
+    isMovingRight,
+    animation.frames,
+    animation.speed,
+  ])
 
   React.useEffect(() => {
     function keyDownHandler(e: KeyboardEvent) {
       if (e.repeat) return
       switch (e.key) {
+        case 'w':
         case 'ArrowUp':
           setIsMovingUp(true)
           break
+        case 's':
         case 'ArrowDown':
           setIsMovingDown(true)
           break
+        case 'a':
         case 'ArrowLeft':
           setIsMovingLeft(true)
           break
+        case 'd':
         case 'ArrowRight':
           setIsMovingRight(true)
           break
@@ -68,15 +86,19 @@ export default function Character({
   React.useEffect(() => {
     function keyUpHandler(e: KeyboardEvent) {
       switch (e.key) {
+        case 'w':
         case 'ArrowUp':
           setIsMovingUp(false)
           break
+        case 's':
         case 'ArrowDown':
           setIsMovingDown(false)
           break
+        case 'a':
         case 'ArrowLeft':
           setIsMovingLeft(false)
           break
+        case 'd':
         case 'ArrowRight':
           setIsMovingRight(false)
           break
@@ -88,7 +110,11 @@ export default function Character({
 
   return (
     <S.Container>
-      <S.Character source={animation} direction={direction} frame={frame} />
+      <S.Character
+        source={animation.path}
+        direction={direction}
+        frame={frame}
+      />
     </S.Container>
   )
 }
